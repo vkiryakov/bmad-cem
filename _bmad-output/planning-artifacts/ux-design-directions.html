@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bmad-cem — Design Directions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
+
+  /* Navigation */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 24px; display: flex; align-items: center; gap: 16px; overflow-x: auto; }
+  .nav h1 { font-size: 14px; font-weight: 600; color: #f8fafc; white-space: nowrap; margin-right: 8px; }
+  .nav-btn { padding: 6px 14px; border-radius: 8px; border: 1px solid #475569; background: transparent; color: #94a3b8; font-size: 12px; font-family: inherit; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+  .nav-btn:hover, .nav-btn.active { background: #475569; color: #f8fafc; border-color: #64748b; }
+
+  /* Sections */
+  .section { display: none; padding: 80px 24px 24px; min-height: 100vh; }
+  .section.active { display: block; }
+  .section-title { font-size: 20px; font-weight: 600; color: #f8fafc; margin-bottom: 8px; }
+  .section-desc { font-size: 14px; color: #94a3b8; margin-bottom: 24px; max-width: 700px; }
+
+  /* Mockup Frame */
+  .mockup-frame { background: #f8fafc; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+
+  /* ===== SHARED MOCKUP STYLES ===== */
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #fff; border-right: 1px solid #e2e8f0; padding: 16px 0; flex-shrink: 0; }
+  .sidebar-logo { padding: 0 16px 16px; font-size: 16px; font-weight: 700; color: #1e293b; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 14px; color: #64748b; cursor: pointer; transition: all 0.15s; }
+  .sidebar-item:hover { background: #f1f5f9; color: #1e293b; }
+  .sidebar-item.active { background: #f1f5f9; color: #1e293b; font-weight: 500; }
+  .sidebar-icon { width: 18px; height: 18px; border-radius: 4px; background: #e2e8f0; flex-shrink: 0; }
+  .sidebar-item.active .sidebar-icon { background: #475569; }
+
+  /* Top bar */
+  .topbar { height: 48px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+  .topbar-title { font-size: 16px; font-weight: 600; color: #1e293b; }
+  .topbar-spacer { flex: 1; }
+
+  /* Buttons */
+  .btn { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: #475569; color: #fff; }
+  .btn-primary:hover { background: #334155; }
+  .btn-outline { background: transparent; border: 1px solid #e2e8f0; color: #475569; }
+  .btn-outline:hover { background: #f1f5f9; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-success { background: #10b981; color: #fff; }
+
+  /* Badge */
+  .badge { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+  .badge-draft { background: #f1f5f9; color: #475569; }
+  .badge-active { background: #d1fae5; color: #047857; }
+  .badge-completed { background: #e0f2fe; color: #0369a1; }
+
+  /* Cards */
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+  .card-metric { text-align: center; }
+  .card-metric .value { font-size: 28px; font-weight: 700; color: #1e293b; }
+  .card-metric .label { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  /* Table */
+  .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table th { text-align: left; padding: 8px 12px; font-size: 12px; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  .table td { padding: 8px 12px; color: #1e293b; border-bottom: 1px solid #f1f5f9; }
+  .table tr { height: 40px; }
+  .table tr:hover td { background: #f8fafc; }
+
+  /* ===== DIRECTION 1: Dashboard ===== */
+  .d1-layout { display: flex; height: 600px; }
+  .d1-content { flex: 1; background: #f8fafc; padding: 20px; overflow: auto; }
+  .d1-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .d1-surveys { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .d1-survey-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+  .d1-survey-card h3 { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 4px; }
+  .d1-survey-card .meta { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+  .d1-survey-card .stats { display: flex; gap: 16px; font-size: 12px; color: #64748b; }
+  .d1-survey-card .stats span { display: flex; align-items: center; gap: 4px; }
+
+  /* ===== DIRECTION 2: Graph Constructor ===== */
+  .d2-layout { display: flex; height: 600px; }
+  .d2-canvas { flex: 1; background: #f8fafc; position: relative; overflow: hidden; }
+  .d2-toolbar { position: absolute; top: 0; left: 0; right: 0; height: 48px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; gap: 8px; z-index: 10; }
+  .d2-grid { position: absolute; inset: 0; top: 48px; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+
+  /* Nodes */
+  .node { position: absolute; background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; min-width: 160px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); z-index: 5; }
+  .node-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .node-type { width: 8px; height: 8px; border-radius: 50%; }
+  .node-title { font-size: 13px; font-weight: 500; color: #1e293b; }
+  .node-outputs { display: flex; flex-direction: column; gap: 4px; }
+  .node-output { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #64748b; }
+  .node-output-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid #94a3b8; background: #fff; flex-shrink: 0; }
+
+  .node-nps { border-color: #60a5fa; }
+  .node-nps .node-type { background: #60a5fa; }
+  .node-open { border-color: #34d399; }
+  .node-open .node-type { background: #34d399; }
+  .node-closed { border-color: #a78bfa; }
+  .node-closed .node-type { background: #a78bfa; }
+  .node-welcome { border-color: #475569; }
+  .node-welcome .node-type { background: #475569; }
+  .node-thanks { border-color: #475569; background: #f8fafc; }
+  .node-thanks .node-type { background: #475569; }
+
+  /* Edges (SVG) */
+  .d2-edges { position: absolute; inset: 0; top: 48px; z-index: 2; pointer-events: none; }
+
+  /* Side panel */
+  .d2-panel { width: 360px; background: #fff; border-left: 1px solid #e2e8f0; padding: 20px; overflow: auto; }
+  .d2-panel h3 { font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 16px; }
+  .d2-panel-field { margin-bottom: 14px; }
+  .d2-panel-label { font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 4px; }
+  .d2-panel-input { width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; color: #1e293b; }
+  .d2-panel-input:focus { outline: none; border-color: #475569; box-shadow: 0 0 0 2px rgba(71,85,105,0.15); }
+
+  /* ===== DIRECTION 3: Questions Library ===== */
+  .d3-layout { display: flex; height: 600px; }
+  .d3-content { flex: 1; background: #f8fafc; padding: 20px; overflow: auto; }
+  .d3-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+  .d3-filter { padding: 5px 12px; border-radius: 20px; font-size: 12px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; cursor: pointer; font-family: inherit; }
+  .d3-filter.active { background: #475569; color: #fff; border-color: #475569; }
+  .d3-question-type { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+  .type-nps { background: #eff6ff; color: #2563eb; }
+  .type-open { background: #ecfdf5; color: #059669; }
+  .type-closed { background: #f5f3ff; color: #7c3aed; }
+  .type-matrix { background: #fffbeb; color: #d97706; }
+  .type-multi { background: #fdf2f8; color: #db2777; }
+
+  /* ===== DIRECTION 4: Analytics ===== */
+  .d4-layout { display: flex; height: 600px; }
+  .d4-content { flex: 1; background: #f8fafc; padding: 20px; overflow: auto; }
+  .d4-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .d4-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .d4-chart { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+  .d4-chart h4 { font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 12px; }
+
+  /* NPS Gauge */
+  .nps-gauge { display: flex; align-items: center; gap: 16px; }
+  .nps-score { font-size: 48px; font-weight: 700; color: #1e293b; }
+  .nps-breakdown { flex: 1; }
+  .nps-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+  .nps-bar-d { background: #fda4af; }
+  .nps-bar-p { background: #fde68a; }
+  .nps-bar-pr { background: #6ee7b7; }
+  .nps-labels { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+
+  /* Bar chart */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 8px; }
+  .bar { flex: 1; background: #e0e7ff; border-radius: 4px 4px 0 0; min-height: 8px; transition: background 0.2s; position: relative; }
+  .bar:hover { background: #818cf8; }
+  .bar-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #94a3b8; white-space: nowrap; }
+
+  /* ===== DIRECTION 5: Respondent Mobile ===== */
+  .d5-phone { width: 375px; height: 667px; margin: 0 auto; background: #f8fafc; border-radius: 24px; border: 2px solid #e2e8f0; overflow: hidden; position: relative; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+  .d5-statusbar { height: 44px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #1e293b; font-weight: 600; }
+  .d5-progress { height: 4px; background: #e2e8f0; }
+  .d5-progress-fill { height: 100%; background: #475569; border-radius: 0 2px 2px 0; transition: width 0.3s; }
+  .d5-progress-text { padding: 8px 24px; font-size: 12px; color: #94a3b8; text-align: right; }
+  .d5-content { padding: 16px 24px; flex: 1; }
+  .d5-question { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 24px; line-height: 1.4; }
+  .d5-nps-scale { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center; }
+  .d5-nps-btn { width: 48px; height: 48px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-size: 16px; font-weight: 500; color: #475569; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .d5-nps-btn:hover { border-color: #475569; background: #f1f5f9; }
+  .d5-nps-btn.selected { background: #475569; color: #fff; border-color: #475569; }
+  .d5-nps-labels { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 24px; padding: 0 4px; }
+  .d5-bottom { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 24px 32px; background: #fff; border-top: 1px solid #e2e8f0; }
+  .d5-next-btn { width: 100%; padding: 14px; border-radius: 12px; background: #475569; color: #fff; font-size: 15px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+  .d5-next-btn:hover { background: #334155; }
+  .d5-next-btn:disabled { background: #cbd5e1; cursor: default; }
+
+  /* ===== DIRECTION 6: Respondent Desktop ===== */
+  .d6-desktop { max-width: 520px; margin: 0 auto; }
+  .d6-card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.06); overflow: hidden; }
+  .d6-header { padding: 20px 24px 0; }
+  .d6-progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .d6-progress-bar { flex: 1; height: 6px; background: #e2e8f0; border-radius: 3px; }
+  .d6-progress-bar-fill { height: 100%; background: #475569; border-radius: 3px; }
+  .d6-progress-label { font-size: 12px; color: #94a3b8; white-space: nowrap; }
+  .d6-body { padding: 0 24px 24px; }
+  .d6-question { font-size: 20px; font-weight: 600; color: #1e293b; margin-bottom: 24px; line-height: 1.4; }
+  .d6-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .d6-option { padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; color: #475569; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+  .d6-option:hover { border-color: #475569; background: #f8fafc; }
+  .d6-option.selected { border-color: #475569; background: #f1f5f9; color: #1e293b; font-weight: 500; }
+  .d6-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #cbd5e1; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .d6-option.selected .d6-radio { border-color: #475569; }
+  .d6-option.selected .d6-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #475569; }
+  .d6-footer { padding: 0 24px 24px; }
+
+  /* ===== DIRECTION 7: Heatmap on Graph ===== */
+  .d7-layout { display: flex; height: 600px; }
+  .d7-canvas { flex: 1; background: #f8fafc; position: relative; overflow: hidden; }
+  .d7-toolbar { position: absolute; top: 0; left: 0; right: 0; height: 48px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; gap: 8px; z-index: 10; }
+  .d7-grid { position: absolute; inset: 0; top: 48px; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+  .d7-legend { position: absolute; bottom: 16px; right: 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; z-index: 10; font-size: 11px; }
+  .d7-legend-title { font-weight: 600; color: #1e293b; margin-bottom: 8px; }
+  .d7-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: #64748b; }
+  .d7-legend-line { width: 24px; height: 0; border-radius: 2px; }
+
+  /* Heatmap nodes */
+  .hnode { position: absolute; background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; min-width: 160px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); z-index: 5; }
+  .hnode-count { position: absolute; top: -8px; right: -8px; background: #475569; color: #fff; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 10px; }
+
+  /* ===== DIRECTION 8: Respondent Welcome ===== */
+  .d8-welcome { max-width: 480px; margin: 0 auto; text-align: center; }
+  .d8-card { background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 48px 32px; }
+  .d8-icon { width: 64px; height: 64px; border-radius: 16px; background: #f1f5f9; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .d8-title { font-size: 24px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+  .d8-desc { font-size: 15px; color: #64748b; margin-bottom: 8px; line-height: 1.5; }
+  .d8-meta { font-size: 13px; color: #94a3b8; margin-bottom: 32px; }
+  .d8-start-btn { padding: 14px 48px; border-radius: 12px; background: #475569; color: #fff; font-size: 16px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .d8-start-btn:hover { background: #334155; }
+
+  /* ===== COMPARISON VIEW ===== */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .compare-label { font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* SVG edges */
+  svg line { stroke-linecap: round; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <h1>bmad-cem</h1>
+  <button class="nav-btn active" onclick="show('d1')">1. Dashboard</button>
+  <button class="nav-btn" onclick="show('d2')">2. Конструктор</button>
+  <button class="nav-btn" onclick="show('d3')">3. Библиотека</button>
+  <button class="nav-btn" onclick="show('d4')">4. Аналитика</button>
+  <button class="nav-btn" onclick="show('d5')">5. Респондент Mobile</button>
+  <button class="nav-btn" onclick="show('d6')">6. Респондент Desktop</button>
+  <button class="nav-btn" onclick="show('d7')">7. Heatmap</button>
+  <button class="nav-btn" onclick="show('d8')">8. Welcome Screen</button>
+</nav>
+
+<!-- ===== DIRECTION 1: Dashboard ===== -->
+<section id="d1" class="section active">
+  <h2 class="section-title">Direction 1: Dashboard — Обзор опросов</h2>
+  <p class="section-desc">Компактный dashboard с метриками вверху и карточками опросов. Sidebar навигация слева. Пустое состояние с CTA.</p>
+  <div class="mockup-frame">
+    <div class="d1-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CEM</div>
+        <div class="sidebar-item active"><div class="sidebar-icon"></div>Дашборд</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Опросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Вопросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Аналитика</div>
+      </div>
+      <div class="d1-content">
+        <div class="topbar" style="margin: -20px -20px 20px; padding: 0 20px;">
+          <span class="topbar-title">Дашборд</span>
+          <div class="topbar-spacer"></div>
+          <button class="btn btn-primary">+ Создать опрос</button>
+        </div>
+        <div class="d1-metrics">
+          <div class="card card-metric"><div class="value">3</div><div class="label">Активных опросов</div></div>
+          <div class="card card-metric"><div class="value">47</div><div class="label">Ответов за неделю</div></div>
+          <div class="card card-metric"><div class="value">78%</div><div class="label">Completion Rate</div></div>
+          <div class="card card-metric"><div class="value" style="color: #10b981;">+42</div><div class="label">Средний NPS</div></div>
+        </div>
+        <h3 style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 12px;">Последние опросы</h3>
+        <div class="d1-surveys">
+          <div class="d1-survey-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <h3>Удовлетворённость Q1 2026</h3>
+              <span class="badge badge-active">Active</span>
+            </div>
+            <div class="meta">Создан 15 марта · 8 вопросов</div>
+            <div class="stats">
+              <span>👥 24 респондента</span>
+              <span>✅ 18 завершили</span>
+              <span>📊 NPS: +45</span>
+            </div>
+          </div>
+          <div class="d1-survey-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <h3>Оценка поддержки</h3>
+              <span class="badge badge-active">Active</span>
+            </div>
+            <div class="meta">Создан 10 марта · 6 вопросов</div>
+            <div class="stats">
+              <span>👥 15 респондентов</span>
+              <span>✅ 12 завершили</span>
+              <span>📊 NPS: +28</span>
+            </div>
+          </div>
+          <div class="d1-survey-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <h3>Онбординг фидбэк</h3>
+              <span class="badge badge-completed">Completed</span>
+            </div>
+            <div class="meta">Создан 1 марта · 10 вопросов</div>
+            <div class="stats">
+              <span>👥 32 респондента</span>
+              <span>✅ 28 завершили</span>
+              <span>📊 NPS: +55</span>
+            </div>
+          </div>
+          <div class="d1-survey-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <h3>Новый опрос</h3>
+              <span class="badge badge-draft">Draft</span>
+            </div>
+            <div class="meta">Создан 20 марта · 4 вопроса</div>
+            <div class="stats">
+              <span style="color: #94a3b8;">Черновик — ещё не запущен</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 2: Graph Constructor ===== -->
+<section id="d2" class="section">
+  <h2 class="section-title">Direction 2: Граф-конструктор опросов</h2>
+  <p class="section-desc">Канвас с нодами + боковая панель настроек. Тулбар сверху. Ноды с цветовым кодированием типов и типизированными выходами.</p>
+  <div class="mockup-frame">
+    <div class="d2-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CEM</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Дашборд</div>
+        <div class="sidebar-item active"><div class="sidebar-icon"></div>Опросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Вопросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Аналитика</div>
+      </div>
+      <div class="d2-canvas">
+        <div class="d2-toolbar">
+          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Удовлетворённость Q1</span>
+          <span class="badge badge-draft" style="margin-left: 8px;">Draft</span>
+          <div class="topbar-spacer"></div>
+          <button class="btn btn-outline btn-sm">+ Добавить вопрос</button>
+          <button class="btn btn-outline btn-sm">⚡ Валидация</button>
+          <button class="btn btn-outline btn-sm">👁 Превью</button>
+          <button class="btn btn-primary btn-sm">Активировать</button>
+        </div>
+        <div class="d2-grid">
+          <!-- Welcome node -->
+          <div class="node node-welcome" style="top: 40px; left: 60px;">
+            <div class="node-header"><div class="node-type"></div><span class="node-title">Welcome</span></div>
+            <div class="node-outputs"><div class="node-output"><div class="node-output-dot"></div>Начать</div></div>
+          </div>
+
+          <!-- NPS node -->
+          <div class="node node-nps" style="top: 40px; left: 300px;">
+            <div class="node-header"><div class="node-type"></div><span class="node-title">NPS: Общая оценка</span></div>
+            <div class="node-outputs">
+              <div class="node-output"><div class="node-output-dot" style="border-color: #f87171;"></div>Detractor (0-6)</div>
+              <div class="node-output"><div class="node-output-dot" style="border-color: #fbbf24;"></div>Passive (7-8)</div>
+              <div class="node-output"><div class="node-output-dot" style="border-color: #34d399;"></div>Promoter (9-10)</div>
+            </div>
+          </div>
+
+          <!-- Open question for detractors -->
+          <div class="node node-open" style="top: 10px; left: 580px;">
+            <div class="node-header"><div class="node-type"></div><span class="node-title">Что можно улучшить?</span></div>
+            <div class="node-outputs"><div class="node-output"><div class="node-output-dot"></div>Далее</div></div>
+          </div>
+
+          <!-- Closed question for passives -->
+          <div class="node node-closed" style="top: 140px; left: 580px;">
+            <div class="node-header"><div class="node-type"></div><span class="node-title">Какой аспект важнее?</span></div>
+            <div class="node-outputs">
+              <div class="node-output"><div class="node-output-dot"></div>Функционал</div>
+              <div class="node-output"><div class="node-output-dot"></div>Поддержка</div>
+              <div class="node-output"><div class="node-output-dot"></div>Цена</div>
+            </div>
+          </div>
+
+          <!-- Thank you -->
+          <div class="node node-thanks" style="top: 280px; left: 580px;">
+            <div class="node-header"><div class="node-type"></div><span class="node-title">Спасибо!</span></div>
+          </div>
+
+          <!-- SVG Edges -->
+          <svg class="d2-edges" width="100%" height="100%">
+            <line x1="230" y1="64" x2="300" y2="64" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="480" y1="44" x2="580" y2="34" stroke="#f87171" stroke-width="2"/>
+            <line x1="480" y1="64" x2="580" y2="164" stroke="#fbbf24" stroke-width="2"/>
+            <line x1="480" y1="84" x2="540" y2="300" stroke="#34d399" stroke-width="2"/>
+            <line x1="680" y1="34" x2="720" y2="300" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="d2-panel">
+        <h3>NPS: Общая оценка</h3>
+        <div style="margin-bottom: 16px;">
+          <span class="d3-question-type type-nps">NPS</span>
+        </div>
+        <div class="d2-panel-field">
+          <div class="d2-panel-label">Текст вопроса</div>
+          <input class="d2-panel-input" value="Насколько вы готовы рекомендовать наш продукт?">
+        </div>
+        <div class="d2-panel-field">
+          <div class="d2-panel-label">Подсказка (необязательно)</div>
+          <input class="d2-panel-input" value="Оцените от 0 до 10" placeholder="Вспомогательный текст...">
+        </div>
+        <div class="d2-panel-field">
+          <div class="d2-panel-label">Выходы</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #fef2f2; border-radius: 8px; font-size: 13px; color: #1e293b;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #f87171;"></div>
+              Detractor (0-6)
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #fffbeb; border-radius: 8px; font-size: 13px; color: #1e293b;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></div>
+              Passive (7-8)
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #ecfdf5; border-radius: 8px; font-size: 13px; color: #1e293b;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #34d399;"></div>
+              Promoter (9-10)
+            </div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Выходы NPS генерируются автоматически</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 3: Questions Library ===== -->
+<section id="d3" class="section">
+  <h2 class="section-title">Direction 3: Библиотека вопросов</h2>
+  <p class="section-desc">Табличный view с фильтрацией по типу. Компактные строки. Цветовые маркеры типов. Поиск и создание.</p>
+  <div class="mockup-frame">
+    <div class="d3-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CEM</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Дашборд</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Опросы</div>
+        <div class="sidebar-item active"><div class="sidebar-icon"></div>Вопросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Аналитика</div>
+      </div>
+      <div class="d3-content">
+        <div class="topbar" style="margin: -20px -20px 20px; padding: 0 20px;">
+          <span class="topbar-title">Библиотека вопросов</span>
+          <div class="topbar-spacer"></div>
+          <input class="d2-panel-input" style="width: 240px; font-size: 13px; padding: 6px 12px;" placeholder="Поиск по тексту вопроса...">
+          <button class="btn btn-primary" style="margin-left: 8px;">+ Новый вопрос</button>
+        </div>
+        <div class="d3-filters">
+          <button class="d3-filter active">Все (12)</button>
+          <button class="d3-filter">NPS (3)</button>
+          <button class="d3-filter">Открытый (4)</button>
+          <button class="d3-filter">Закрытый (2)</button>
+          <button class="d3-filter">Матричный (2)</button>
+          <button class="d3-filter">Мульти-селект (1)</button>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Вопрос</th><th>Тип</th><th>Используется</th><th>Ответов</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Насколько вы готовы рекомендовать наш продукт?</td><td><span class="d3-question-type type-nps">NPS</span></td><td>2 опроса</td><td>42</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Что можно улучшить в нашем продукте?</td><td><span class="d3-question-type type-open">Открытый</span></td><td>1 опрос</td><td>18</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Какой аспект продукта для вас важнее всего?</td><td><span class="d3-question-type type-closed">Закрытый</span></td><td>1 опрос</td><td>24</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Оцените качество поддержки по шкале NPS</td><td><span class="d3-question-type type-nps">NPS</span></td><td>1 опрос</td><td>15</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Оцените каждый аспект продукта</td><td><span class="d3-question-type type-matrix">Матричный</span></td><td>0 опросов</td><td>0</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Какие функции вы используете чаще всего?</td><td><span class="d3-question-type type-multi">Мульти-селект</span></td><td>1 опрос</td><td>28</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+            <tr><td>Опишите ваш опыт взаимодействия с поддержкой</td><td><span class="d3-question-type type-open">Открытый</span></td><td>1 опрос</td><td>12</td><td><button class="btn btn-outline btn-sm">✏️</button></td></tr>
+          </tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px; color: #94a3b8;">
+          <span>Показано 7 из 12</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-outline btn-sm" disabled>←</button>
+            <button class="btn btn-outline btn-sm" style="background: #475569; color: #fff; border-color: #475569;">1</button>
+            <button class="btn btn-outline btn-sm">2</button>
+            <button class="btn btn-outline btn-sm">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 4: Analytics ===== -->
+<section id="d4" class="section">
+  <h2 class="section-title">Direction 4: Аналитика опроса</h2>
+  <p class="section-desc">Карточки метрик сверху, NPS gauge, распределение ответов. Чистый, информативный дашборд.</p>
+  <div class="mockup-frame">
+    <div class="d4-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CEM</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Дашборд</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Опросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Вопросы</div>
+        <div class="sidebar-item active"><div class="sidebar-icon"></div>Аналитика</div>
+      </div>
+      <div class="d4-content">
+        <div class="topbar" style="margin: -20px -20px 20px; padding: 0 20px;">
+          <span class="topbar-title">Аналитика: Удовлетворённость Q1</span>
+          <div class="topbar-spacer"></div>
+          <button class="btn btn-outline btn-sm">Heatmap</button>
+          <button class="btn btn-outline btn-sm">Фильтры</button>
+        </div>
+        <div class="d4-metrics">
+          <div class="card card-metric"><div class="value">24</div><div class="label">Респондентов</div></div>
+          <div class="card card-metric"><div class="value">18</div><div class="label">Завершили</div></div>
+          <div class="card card-metric"><div class="value">75%</div><div class="label">Completion Rate</div></div>
+        </div>
+        <div class="d4-charts">
+          <div class="d4-chart">
+            <h4>NPS Score</h4>
+            <div class="nps-gauge">
+              <div class="nps-score">+42</div>
+              <div class="nps-breakdown">
+                <div class="nps-bar">
+                  <div class="nps-bar-d" style="width: 22%;"></div>
+                  <div class="nps-bar-p" style="width: 14%;"></div>
+                  <div class="nps-bar-pr" style="width: 64%;"></div>
+                </div>
+                <div class="nps-labels">
+                  <span>Detractors 22%</span>
+                  <span>Passives 14%</span>
+                  <span>Promoters 64%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d4-chart">
+            <h4>Какой аспект важнее всего?</h4>
+            <div class="bar-chart">
+              <div class="bar" style="height: 100%;"><span class="bar-label">Функционал</span></div>
+              <div class="bar" style="height: 65%;"><span class="bar-label">Поддержка</span></div>
+              <div class="bar" style="height: 40%;"><span class="bar-label">Цена</span></div>
+              <div class="bar" style="height: 25%;"><span class="bar-label">UX</span></div>
+              <div class="bar" style="height: 15%;"><span class="bar-label">Скорость</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="d4-chart">
+          <h4>Респонденты</h4>
+          <table class="table" style="font-size: 13px;">
+            <thead><tr><th>Email</th><th>Статус</th><th>NPS</th><th>Время</th></tr></thead>
+            <tbody>
+              <tr><td>alice@example.com</td><td><span class="badge badge-active">Завершил</span></td><td>9</td><td>2:34</td></tr>
+              <tr><td>bob@example.com</td><td><span class="badge badge-active">Завершил</span></td><td>4</td><td>3:12</td></tr>
+              <tr><td>carol@example.com</td><td><span class="badge" style="background: #fef3c7; color: #92400e;">В процессе</span></td><td>—</td><td>—</td></tr>
+              <tr><td>dave@example.com</td><td><span class="badge badge-draft">Не открыл</span></td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 5: Respondent Mobile ===== -->
+<section id="d5" class="section">
+  <h2 class="section-title">Direction 5: Интерфейс респондента — Mobile</h2>
+  <p class="section-desc">Компактная карточка. NPS-вопрос с кнопками 0-10. Прогресс-бар сверху, кнопка "Далее" внизу. Touch-friendly.</p>
+  <div style="padding: 24px; background: #f1f5f9; border-radius: 12px; display: inline-block;">
+    <div class="d5-phone">
+      <div class="d5-statusbar">Опрос</div>
+      <div class="d5-progress"><div class="d5-progress-fill" style="width: 25%;"></div></div>
+      <div class="d5-progress-text">Вопрос 2 из 8</div>
+      <div class="d5-content">
+        <div class="d5-question">Насколько вы готовы рекомендовать наш продукт друзьям или коллегам?</div>
+        <div class="d5-nps-scale">
+          <div class="d5-nps-btn" onclick="selectNps(this)">0</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">1</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">2</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">3</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">4</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">5</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">6</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">7</div>
+          <div class="d5-nps-btn selected" onclick="selectNps(this)">8</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">9</div>
+          <div class="d5-nps-btn" onclick="selectNps(this)">10</div>
+        </div>
+        <div class="d5-nps-labels">
+          <span>Совсем нет</span>
+          <span>Обязательно</span>
+        </div>
+      </div>
+      <div class="d5-bottom">
+        <button class="d5-next-btn">Далее →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 6: Respondent Desktop ===== -->
+<section id="d6" class="section">
+  <h2 class="section-title">Direction 6: Интерфейс респондента — Desktop</h2>
+  <p class="section-desc">Центрированная карточка max-width 520px. Закрытый вопрос с вариантами ответа. Прогресс-бар + счётчик.</p>
+  <div style="padding: 48px; background: #f8fafc; border-radius: 12px;">
+    <div class="d6-desktop">
+      <div class="d6-card">
+        <div class="d6-header">
+          <div class="d6-progress-wrap">
+            <div class="d6-progress-bar"><div class="d6-progress-bar-fill" style="width: 50%;"></div></div>
+            <div class="d6-progress-label">4 из 8</div>
+          </div>
+        </div>
+        <div class="d6-body">
+          <div class="d6-question">Какой аспект нашего продукта для вас важнее всего?</div>
+          <div class="d6-options">
+            <div class="d6-option" onclick="selectOption(this)"><div class="d6-radio"></div>Функциональность и возможности</div>
+            <div class="d6-option selected" onclick="selectOption(this)"><div class="d6-radio"></div>Качество поддержки</div>
+            <div class="d6-option" onclick="selectOption(this)"><div class="d6-radio"></div>Соотношение цена/качество</div>
+            <div class="d6-option" onclick="selectOption(this)"><div class="d6-radio"></div>Удобство использования (UX)</div>
+            <div class="d6-option" onclick="selectOption(this)"><div class="d6-radio"></div>Скорость и производительность</div>
+          </div>
+        </div>
+        <div class="d6-footer">
+          <button class="d5-next-btn" style="border-radius: 10px;">Далее →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 7: Heatmap on Graph ===== -->
+<section id="d7" class="section">
+  <h2 class="section-title">Direction 7: Heatmap на графе</h2>
+  <p class="section-desc">Аналитика наложена на граф-конструктор. Толщина/цвет рёбер = объём трафика. Счётчики на нодах. Drop-off пунктиром.</p>
+  <div class="mockup-frame">
+    <div class="d7-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CEM</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Дашборд</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Опросы</div>
+        <div class="sidebar-item"><div class="sidebar-icon"></div>Вопросы</div>
+        <div class="sidebar-item active"><div class="sidebar-icon"></div>Аналитика</div>
+      </div>
+      <div class="d7-canvas">
+        <div class="d7-toolbar">
+          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Heatmap: Удовлетворённость Q1</span>
+          <div class="topbar-spacer"></div>
+          <button class="btn btn-primary btn-sm" style="background: #475569;">Heatmap ON</button>
+          <button class="btn btn-outline btn-sm">Таблица</button>
+        </div>
+        <div class="d7-grid">
+          <!-- Welcome -->
+          <div class="hnode node-welcome" style="top: 60px; left: 60px;">
+            <div class="hnode-count">24</div>
+            <div class="node-header"><div class="node-type" style="background: #475569;"></div><span class="node-title">Welcome</span></div>
+          </div>
+
+          <!-- NPS -->
+          <div class="hnode node-nps" style="top: 60px; left: 300px;">
+            <div class="hnode-count">22</div>
+            <div class="node-header"><div class="node-type" style="background: #60a5fa;"></div><span class="node-title">NPS: Общая оценка</span></div>
+            <div class="node-outputs">
+              <div class="node-output"><div class="node-output-dot" style="border-color: #f87171;"></div>Detractor (5)</div>
+              <div class="node-output"><div class="node-output-dot" style="border-color: #fbbf24;"></div>Passive (3)</div>
+              <div class="node-output"><div class="node-output-dot" style="border-color: #34d399;"></div>Promoter (14)</div>
+            </div>
+          </div>
+
+          <!-- Detractor question -->
+          <div class="hnode node-open" style="top: 10px; left: 580px;">
+            <div class="hnode-count">5</div>
+            <div class="node-header"><div class="node-type" style="background: #34d399;"></div><span class="node-title">Что улучшить?</span></div>
+          </div>
+
+          <!-- Passive question -->
+          <div class="hnode node-closed" style="top: 130px; left: 580px;">
+            <div class="hnode-count">3</div>
+            <div class="node-header"><div class="node-type" style="background: #a78bfa;"></div><span class="node-title">Какой аспект?</span></div>
+          </div>
+
+          <!-- Thanks -->
+          <div class="hnode node-thanks" style="top: 260px; left: 580px;">
+            <div class="hnode-count" style="background: #10b981;">18</div>
+            <div class="node-header"><div class="node-type" style="background: #475569;"></div><span class="node-title">Спасибо!</span></div>
+          </div>
+
+          <!-- Heatmap edges -->
+          <svg class="d2-edges" width="100%" height="100%" style="top: 0;">
+            <!-- Welcome → NPS (thick, high traffic) -->
+            <line x1="230" y1="84" x2="300" y2="84" stroke="#3b82f6" stroke-width="6" opacity="0.7"/>
+            <!-- NPS → Detractor (thin) -->
+            <line x1="480" y1="64" x2="580" y2="34" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+            <!-- NPS → Passive (thin) -->
+            <line x1="480" y1="84" x2="580" y2="154" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
+            <!-- NPS → Promoter (thick, high traffic) -->
+            <line x1="480" y1="104" x2="540" y2="280" stroke="#3b82f6" stroke-width="5" opacity="0.7"/>
+            <!-- To Thanks -->
+            <line x1="680" y1="34" x2="680" y2="260" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
+            <line x1="680" y1="154" x2="640" y2="260" stroke="#3b82f6" stroke-width="1.5" opacity="0.3"/>
+            <!-- Drop-off -->
+            <line x1="260" y1="100" x2="260" y2="160" stroke="#fda4af" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
+            <text x="270" y="140" font-size="10" fill="#f87171" font-family="Inter">drop-off: 2</text>
+          </svg>
+
+          <!-- Legend -->
+          <div class="d7-legend">
+            <div class="d7-legend-title">Легенда</div>
+            <div class="d7-legend-item">
+              <div class="d7-legend-line" style="border-top: 5px solid #3b82f6; opacity: 0.7;"></div>
+              Высокий трафик
+            </div>
+            <div class="d7-legend-item">
+              <div class="d7-legend-line" style="border-top: 2px solid #3b82f6; opacity: 0.4;"></div>
+              Низкий трафик
+            </div>
+            <div class="d7-legend-item">
+              <div class="d7-legend-line" style="border-top: 2px dashed #fda4af;"></div>
+              Drop-off
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIRECTION 8: Welcome Screen ===== -->
+<section id="d8" class="section">
+  <h2 class="section-title">Direction 8: Welcome Screen респондента</h2>
+  <p class="section-desc">Первый экран, который видит респондент. Тёплый, приглашающий тон. Информация о длительности.</p>
+  <div style="padding: 48px; background: #f8fafc; border-radius: 12px;">
+    <div class="d8-welcome">
+      <div class="d8-card">
+        <div class="d8-icon">📋</div>
+        <div class="d8-title">Ваше мнение важно для нас</div>
+        <div class="d8-desc">Мы хотим стать лучше и будем благодарны за обратную связь о нашем продукте.</div>
+        <div class="d8-meta">8 вопросов · ~3 минуты</div>
+        <button class="d8-start-btn">Начать опрос</button>
+      </div>
+    </div>
+    <div style="height: 32px;"></div>
+    <!-- Thank you variant -->
+    <div class="d8-welcome">
+      <div class="d8-card" style="background: #f0fdf4;">
+        <div class="d8-icon" style="background: #d1fae5;">✓</div>
+        <div class="d8-title" style="color: #065f46;">Спасибо за ваши ответы!</div>
+        <div class="d8-desc">Мы ценим ваше время и обязательно учтём обратную связь для улучшения продукта.</div>
+        <div class="d8-meta" style="margin-bottom: 0;">Ваши ответы сохранены</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function selectNps(el) {
+  el.parentElement.querySelectorAll('.d5-nps-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectOption(el) {
+  el.parentElement.querySelectorAll('.d6-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+
+</body>
+</html>
