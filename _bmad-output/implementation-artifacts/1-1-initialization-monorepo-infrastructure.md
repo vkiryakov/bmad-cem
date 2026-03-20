@@ -1,6 +1,6 @@
 # Story 1.1: Инициализация monorepo и инфраструктуры
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -43,55 +43,55 @@ So that я могу начать разработку фич на правиль
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Инициализация Turborepo monorepo (AC: #1)
-  - [ ] 1.1 `npx create-turbo@latest bmad-cem --package-manager=pnpm`
-  - [ ] 1.2 Очистить дефолтные apps из create-turbo (удалить шаблонные apps)
-  - [ ] 1.3 Настроить pnpm-workspace.yaml: apps/*, packages/*
-  - [ ] 1.4 Настроить turbo.json pipeline: dev, build, lint, type-check
+- [x] Task 1: Инициализация Turborepo monorepo (AC: #1)
+  - [x] 1.1 `npx create-turbo@latest bmad-cem --package-manager=pnpm`
+  - [x] 1.2 Очистить дефолтные apps из create-turbo (удалить шаблонные apps)
+  - [x] 1.3 Настроить pnpm-workspace.yaml: apps/*, packages/*
+  - [x] 1.4 Настроить turbo.json pipeline: dev, build, lint, type-check
 
-- [ ] Task 2: Инициализация Next.js frontend (AC: #1, #3)
-  - [ ] 2.1 `npx create-next-app@latest apps/web --typescript --tailwind --eslint --app --src-dir --use-pnpm`
-  - [ ] 2.2 `cd apps/web && npx shadcn@latest init` (shadcn/ui v4)
-  - [ ] 2.3 Настроить package.json: name = "@bmad-cem/web"
-  - [ ] 2.4 Добавить зависимость на @bmad-cem/shared в package.json
-  - [ ] 2.5 Убедиться что dev-скрипт запускает на порту 3000
+- [x] Task 2: Инициализация Next.js frontend (AC: #1, #3)
+  - [x] 2.1 `npx create-next-app@latest apps/web --typescript --tailwind --eslint --app --src-dir --use-pnpm`
+  - [x] 2.2 `cd apps/web && npx shadcn@latest init` (shadcn/ui v4)
+  - [x] 2.3 Настроить package.json: name = "@bmad-cem/web"
+  - [x] 2.4 Добавить зависимость на @bmad-cem/shared в package.json
+  - [x] 2.5 Убедиться что dev-скрипт запускает на порту 3000
 
-- [ ] Task 3: Инициализация NestJS backend (AC: #1, #3)
-  - [ ] 3.1 `npx @nestjs/cli new apps/api --package-manager=pnpm --strict`
-  - [ ] 3.2 Настроить package.json: name = "@bmad-cem/api"
-  - [ ] 3.3 Добавить зависимость на @bmad-cem/shared
-  - [ ] 3.4 Настроить dev-скрипт на порт 3001
-  - [ ] 3.5 Удалить дефолтный .git из apps/api (NestJS CLI создаёт свой)
+- [x] Task 3: Инициализация NestJS backend (AC: #1, #3)
+  - [x] 3.1 `npx @nestjs/cli new apps/api --package-manager=pnpm --strict`
+  - [x] 3.2 Настроить package.json: name = "@bmad-cem/api"
+  - [x] 3.3 Добавить зависимость на @bmad-cem/shared
+  - [x] 3.4 Настроить dev-скрипт на порт 3001
+  - [x] 3.5 Удалить дефолтный .git из apps/api (NestJS CLI создаёт свой)
 
-- [ ] Task 4: Создание packages/shared (AC: #4)
-  - [ ] 4.1 Создать packages/shared/package.json (name: "@bmad-cem/shared")
-  - [ ] 4.2 Создать packages/shared/tsconfig.json (extends base config)
-  - [ ] 4.3 Создать packages/shared/src/index.ts (пустой barrel export)
-  - [ ] 4.4 Проверить что apps/web и apps/api могут импортировать @bmad-cem/shared
+- [x] Task 4: Создание packages/shared (AC: #4)
+  - [x] 4.1 Создать packages/shared/package.json (name: "@bmad-cem/shared")
+  - [x] 4.2 Создать packages/shared/tsconfig.json (extends base config)
+  - [x] 4.3 Создать packages/shared/src/index.ts (пустой barrel export)
+  - [x] 4.4 Проверить что apps/web и apps/api могут импортировать @bmad-cem/shared
 
-- [ ] Task 5: Создание packages/config (AC: #5)
-  - [ ] 5.1 Создать packages/config/typescript/base.json (strict: true, esModuleInterop: true, resolveJsonModule: true, skipLibCheck: true)
-  - [ ] 5.2 Создать packages/config/typescript/nextjs.json (extends base + jsx: preserve, module: esnext)
-  - [ ] 5.3 Создать packages/config/typescript/nestjs.json (extends base + experimentalDecorators: true, emitDecoratorMetadata: true)
-  - [ ] 5.4 Создать packages/config/eslint/index.js (базовая конфигурация)
+- [x] Task 5: Создание packages/config (AC: #5)
+  - [x] 5.1 Создать packages/config/typescript/base.json (strict: true, esModuleInterop: true, resolveJsonModule: true, skipLibCheck: true)
+  - [x] 5.2 Создать packages/config/typescript/nextjs.json (extends base + jsx: preserve, module: esnext)
+  - [x] 5.3 Создать packages/config/typescript/nestjs.json (extends base + experimentalDecorators: true, emitDecoratorMetadata: true)
+  - [x] 5.4 Создать packages/config/eslint/index.js (базовая конфигурация)
 
-- [ ] Task 6: Docker Compose для PostgreSQL (AC: #2)
-  - [ ] 6.1 Создать docker-compose.yml с сервисом postgres (image: postgres:17, port: 5432)
-  - [ ] 6.2 Создать .env.example с DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-  - [ ] 6.3 Добавить docker-compose volumes для persistence данных
-  - [ ] 6.4 Добавить healthcheck для postgres сервиса
+- [x] Task 6: Docker Compose для PostgreSQL (AC: #2)
+  - [x] 6.1 Создать docker-compose.yml с сервисом postgres (image: postgres:17, port: 5432)
+  - [x] 6.2 Создать .env.example с DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+  - [x] 6.3 Добавить docker-compose volumes для persistence данных
+  - [x] 6.4 Добавить healthcheck для postgres сервиса
 
-- [ ] Task 7: Конфигурация корневых файлов (AC: #1)
-  - [ ] 7.1 Настроить .gitignore (node_modules, dist, .next, .env, .turbo)
-  - [ ] 7.2 Создать .env.example в корне
-  - [ ] 7.3 Проверить `turbo dev` запускает оба apps параллельно
+- [x] Task 7: Конфигурация корневых файлов (AC: #1)
+  - [x] 7.1 Настроить .gitignore (node_modules, dist, .next, .env, .turbo)
+  - [x] 7.2 Создать .env.example в корне
+  - [x] 7.3 Проверить `turbo dev` запускает оба apps параллельно
 
-- [ ] Task 8: Верификация (AC: #1-5)
-  - [ ] 8.1 `pnpm install` проходит без ошибок
-  - [ ] 8.2 `docker compose up -d` запускает PostgreSQL
-  - [ ] 8.3 `turbo dev` запускает web:3000 и api:3001
-  - [ ] 8.4 `turbo build` собирает оба apps
-  - [ ] 8.5 Импорт @bmad-cem/shared работает в обоих apps
+- [x] Task 8: Верификация (AC: #1-5)
+  - [x] 8.1 `pnpm install` проходит без ошибок
+  - [x] 8.2 `docker compose up -d` запускает PostgreSQL
+  - [x] 8.3 `turbo dev` запускает web:3000 и api:3001
+  - [x] 8.4 `turbo build` собирает оба apps
+  - [x] 8.5 Импорт @bmad-cem/shared работает в обоих apps
 
 ## Dev Notes
 
@@ -248,9 +248,42 @@ packages:
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.6
 
 ### Debug Log References
+- Удалён лишний pnpm-workspace.yaml из apps/web (создавался create-next-app)
 
 ### Completion Notes List
+- Turborepo 2.8.20 инициализирован с pipeline: dev, build, lint, type-check
+- Next.js 16.2.0 создан в apps/web с shadcn/ui v4, Tailwind CSS 4, ESLint 9
+- NestJS 11 создан в apps/api на порту 3001
+- packages/shared создан как @bmad-cem/shared с пустым barrel export
+- packages/config создан с base.json, nextjs.json, nestjs.json (strict mode), eslint
+- Docker Compose настроен для PostgreSQL 17 с healthcheck
+- Все AC выполнены: turbo build, turbo dev, docker compose, pnpm install — всё работает
+- NestJS unit тесты проходят (1 passed)
+
+### Change Log
+- 2026-03-20: Полная реализация Story 1.1 — monorepo scaffold и инфраструктура
 
 ### File List
+- package.json (создан)
+- pnpm-workspace.yaml (создан)
+- turbo.json (создан)
+- .npmrc (создан)
+- .gitignore (создан)
+- .env.example (создан)
+- docker-compose.yml (создан)
+- apps/web/ (создан через create-next-app + shadcn init)
+- apps/web/package.json (изменён: name, @bmad-cem/shared dependency)
+- apps/api/ (создан через @nestjs/cli)
+- apps/api/package.json (изменён: name, dev script, @bmad-cem/shared dependency)
+- apps/api/src/main.ts (изменён: порт 3001)
+- packages/shared/package.json (создан)
+- packages/shared/tsconfig.json (создан)
+- packages/shared/src/index.ts (создан)
+- packages/config/package.json (создан)
+- packages/config/typescript/base.json (создан)
+- packages/config/typescript/nextjs.json (создан)
+- packages/config/typescript/nestjs.json (создан)
+- packages/config/eslint/index.js (создан)

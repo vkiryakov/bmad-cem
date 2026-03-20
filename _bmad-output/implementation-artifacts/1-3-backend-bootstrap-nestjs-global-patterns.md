@@ -1,6 +1,6 @@
 # Story 1.3: Backend bootstrap — глобальные паттерны NestJS
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -62,62 +62,62 @@ So that все будущие модули автоматически следу
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Установка зависимостей (AC: #1-6)
-  - [ ] 1.1 `pnpm add @nestjs/config @nestjs/typeorm typeorm pg class-validator class-transformer @nestjs/swagger` в apps/api
-  - [ ] 1.2 `pnpm add typeorm-naming-strategies` в apps/api (для snake_case naming strategy)
-  - [ ] 1.3 Убедиться что @bmad-cem/shared доступен как workspace-зависимость
+- [x] Task 1: Установка зависимостей (AC: #1-6)
+  - [x] 1.1 pnpm add all NestJS dependencies
+  - [x] 1.2 pnpm add typeorm-naming-strategies
+  - [x] 1.3 @bmad-cem/shared доступен как workspace-зависимость
 
-- [ ] Task 2: ConfigModule и database.config (AC: #1, #2)
-  - [ ] 2.1 Создать `apps/api/src/config/database.config.ts` — TypeOrmModuleAsyncOptions с использованием ConfigService
-  - [ ] 2.2 Настроить TypeOrmModule.forRootAsync в app.module.ts с database.config
-  - [ ] 2.3 Включить synchronize: true, snake_case naming strategy (SnakeNamingStrategy из typeorm-naming-strategies)
-  - [ ] 2.4 Настроить ConfigModule.forRoot({ isGlobal: true }) в app.module.ts
-  - [ ] 2.5 Создать/обновить `apps/api/.env` с переменными: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, JWT_SECRET, JWT_EXPIRES_IN, CORS_ORIGIN
-  - [ ] 2.6 Создать/обновить `apps/api/.env.example` с шаблоном всех переменных
+- [x] Task 2: ConfigModule и database.config (AC: #1, #2)
+  - [x] 2.1 Создан `apps/api/src/config/database.config.ts`
+  - [x] 2.2 TypeOrmModule.forRootAsync в app.module.ts
+  - [x] 2.3 synchronize: true, SnakeNamingStrategy
+  - [x] 2.4 ConfigModule.forRoot({ isGlobal: true })
+  - [x] 2.5 apps/api/.env создан
+  - [x] 2.6 apps/api/.env.example создан
 
-- [ ] Task 3: Глобальный ValidationPipe (AC: #3)
-  - [ ] 3.1 Создать `apps/api/src/common/pipes/validation.pipe.ts` — конфигурация ValidationPipe (whitelist: true, forbidNonWhitelisted: true, transform: true)
-  - [ ] 3.2 Зарегистрировать глобально в main.ts через app.useGlobalPipes()
+- [x] Task 3: Глобальный ValidationPipe (AC: #3)
+  - [x] 3.1 Создан validation.pipe.ts
+  - [x] 3.2 Зарегистрирован глобально в main.ts
 
-- [ ] Task 4: Глобальный ExceptionFilter (AC: #4)
-  - [ ] 4.1 Создать `apps/api/src/common/filters/http-exception.filter.ts`
-  - [ ] 4.2 Обработка HttpException — извлечь errorCode из response, вернуть { statusCode, message, errorCode }
-  - [ ] 4.3 Обработка ValidationPipe ошибок — вернуть 400 с errorCode = VALIDATION_ERROR, message с объединёнными ошибками валидации
-  - [ ] 4.4 Обработка неизвестных ошибок — логировать stack trace, вернуть 500 с errorCode = INTERNAL_ERROR
-  - [ ] 4.5 Зарегистрировать глобально в main.ts через app.useGlobalFilters()
+- [x] Task 4: Глобальный ExceptionFilter (AC: #4)
+  - [x] 4.1 Создан http-exception.filter.ts
+  - [x] 4.2 Обработка HttpException с errorCode
+  - [x] 4.3 Обработка ValidationPipe ошибок (VALIDATION_ERROR)
+  - [x] 4.4 Обработка неизвестных ошибок (500, INTERNAL_ERROR)
+  - [x] 4.5 Зарегистрирован глобально в main.ts
 
-- [ ] Task 5: ResponseWrapper interceptor (AC: #5)
-  - [ ] 5.1 Создать `apps/api/src/common/interceptors/response-wrapper.interceptor.ts`
-  - [ ] 5.2 Оборачивать все ответы в { data: response, meta: {} }
-  - [ ] 5.3 Если response уже содержит структуру { data, meta } (для пагинированных списков) — пробросить as-is
-  - [ ] 5.4 Зарегистрировать глобально в main.ts через app.useGlobalInterceptors()
+- [x] Task 5: ResponseWrapper interceptor (AC: #5)
+  - [x] 5.1 Создан response-wrapper.interceptor.ts
+  - [x] 5.2 Оборачивает ответы в { data, meta }
+  - [x] 5.3 Пробрасывает as-is для { data, meta } структур
+  - [x] 5.4 Зарегистрирован глобально в main.ts
 
-- [ ] Task 6: Swagger (AC: #6)
-  - [ ] 6.1 Настроить SwaggerModule в main.ts: title "bmad-cem API", version "1.0", путь /api/docs
-  - [ ] 6.2 Включить plugin в nest-cli.json для автоматической генерации из DTO: `"plugins": ["@nestjs/swagger"]`
+- [x] Task 6: Swagger (AC: #6)
+  - [x] 6.1 SwaggerModule настроен на /api/docs
+  - [x] 6.2 Plugin добавлен в nest-cli.json
 
-- [ ] Task 7: CORS (AC: #7)
-  - [ ] 7.1 Настроить app.enableCors({ origin: configService.get('CORS_ORIGIN') || 'http://localhost:3000' }) в main.ts
-  - [ ] 7.2 Добавить CORS_ORIGIN в .env.example
+- [x] Task 7: CORS (AC: #7)
+  - [x] 7.1 enableCors с CORS_ORIGIN из ConfigService
+  - [x] 7.2 CORS_ORIGIN в .env.example
 
-- [ ] Task 8: API versioning и Health endpoint (AC: #8)
-  - [ ] 8.1 Настроить globalPrefix 'api/v1' в main.ts — app.setGlobalPrefix('api/v1')
-  - [ ] 8.2 Исключить Swagger из global prefix: app.setGlobalPrefix('api/v1', { exclude: ['/api/docs'] })  (или настроить Swagger path отдельно)
-  - [ ] 8.3 Создать `apps/api/src/modules/health/health.controller.ts` — GET /api/v1/health возвращает { status: 'ok' }
-  - [ ] 8.4 Создать `apps/api/src/modules/health/health.module.ts`
-  - [ ] 8.5 Подключить HealthModule в app.module.ts
+- [x] Task 8: API versioning и Health endpoint (AC: #8)
+  - [x] 8.1 globalPrefix 'api/v1'
+  - [x] 8.2 Swagger path настроен отдельно от prefix
+  - [x] 8.3 health.controller.ts — GET /api/v1/health
+  - [x] 8.4 health.module.ts
+  - [x] 8.5 HealthModule подключён в app.module.ts
 
-- [ ] Task 9: Кастомный Business Exception (AC: #4)
-  - [ ] 9.1 Создать `apps/api/src/common/exceptions/business.exception.ts` — класс BusinessException extends HttpException, принимает { statusCode, message, errorCode: ErrorCode }
-  - [ ] 9.2 Использует ErrorCode из @bmad-cem/shared
+- [x] Task 9: Кастомный Business Exception (AC: #4)
+  - [x] 9.1 business.exception.ts — BusinessException extends HttpException
+  - [x] 9.2 Использует ErrorCode из @bmad-cem/shared
 
-- [ ] Task 10: Верификация (AC: #1-8)
-  - [ ] 10.1 `turbo dev` — apps/api стартует без ошибок, TypeORM подключается к PostgreSQL
-  - [ ] 10.2 GET /api/v1/health → { data: { status: 'ok' }, meta: {} }
-  - [ ] 10.3 GET /api/docs → Swagger UI открывается
-  - [ ] 10.4 POST /api/v1/health (невалидный запрос) → проверить что ExceptionFilter и ValidationPipe работают
-  - [ ] 10.5 Запрос с origin http://localhost:3000 → CORS пропускает
-  - [ ] 10.6 `turbo build` проходит без ошибок
+- [x] Task 10: Верификация (AC: #1-8)
+  - [x] 10.1 API стартует, TypeORM подключается к PostgreSQL
+  - [x] 10.2 GET /api/v1/health → {"data":{"status":"ok"},"meta":{}}
+  - [x] 10.3 GET /api/docs → Swagger UI
+  - [x] 10.4 ExceptionFilter и ValidationPipe работают (тесты)
+  - [x] 10.5 CORS: Access-Control-Allow-Origin: http://localhost:3000
+  - [x] 10.6 turbo build проходит без ошибок
 
 ## Dev Notes
 
@@ -288,9 +288,44 @@ apps/api/src/
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.6
 
 ### Debug Log References
+- Shared package переведён на CommonJS для совместимости с NestJS runtime (main → dist/index.js)
 
 ### Completion Notes List
+- ConfigModule + TypeORM настроены с SnakeNamingStrategy и synchronize: true
+- ValidationPipe: whitelist, forbidNonWhitelisted, transform
+- HttpExceptionFilter: BusinessException errorCode, ValidationPipe ошибки, generic 500
+- ResponseWrapperInterceptor: { data, meta } обёртка с passthrough для paginated
+- Swagger на /api/docs с plugin для авто-документации
+- CORS: origin из CORS_ORIGIN env
+- Health endpoint: GET /api/v1/health → {"data":{"status":"ok"},"meta":{}}
+- BusinessException: кастомный HttpException с ErrorCode
+- 7 unit тестов: health controller, exception filter (3), response wrapper (3)
+
+### Change Log
+- 2026-03-20: Story 1.3 — NestJS global patterns (config, pipes, filters, interceptors, swagger, cors, health)
 
 ### File List
+- apps/api/src/main.ts (переписан)
+- apps/api/src/app.module.ts (переписан)
+- apps/api/src/config/database.config.ts (создан)
+- apps/api/src/common/pipes/validation.pipe.ts (создан)
+- apps/api/src/common/filters/http-exception.filter.ts (создан)
+- apps/api/src/common/filters/http-exception.filter.spec.ts (создан)
+- apps/api/src/common/interceptors/response-wrapper.interceptor.ts (создан)
+- apps/api/src/common/interceptors/response-wrapper.interceptor.spec.ts (создан)
+- apps/api/src/common/exceptions/business.exception.ts (создан)
+- apps/api/src/modules/health/health.controller.ts (создан)
+- apps/api/src/modules/health/health.controller.spec.ts (создан)
+- apps/api/src/modules/health/health.module.ts (создан)
+- apps/api/nest-cli.json (изменён — swagger plugin)
+- apps/api/.env (создан)
+- apps/api/.env.example (создан)
+- apps/api/package.json (изменён — новые зависимости)
+- apps/api/src/app.controller.ts (удалён)
+- apps/api/src/app.service.ts (удалён)
+- apps/api/src/app.controller.spec.ts (удалён)
+- packages/shared/package.json (изменён — build скрипт, main → dist)
+- packages/shared/tsconfig.json (изменён — CommonJS)

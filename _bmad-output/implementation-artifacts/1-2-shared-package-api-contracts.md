@@ -1,6 +1,6 @@
 # Story 1.2: Shared пакет — контракты API
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -41,37 +41,37 @@ So that frontend и backend используют одинаковые контр
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Создание enum-файлов (AC: #1)
-  - [ ] 1.1 Создать `packages/shared/src/enums/error-code.enum.ts` — ErrorCode enum со значениями: AUTH_INVALID_CREDENTIALS, AUTH_UNAUTHORIZED, SURVEY_NOT_FOUND, SURVEY_ALREADY_ACTIVE, SURVEY_CANNOT_REACTIVATE, SURVEY_INVALID_TRANSITION, SURVEY_DELETE_FORBIDDEN, SURVEY_FLOW_INVALID, SURVEY_NOT_ACTIVE, QUESTION_NOT_FOUND, QUESTION_HAS_RESPONSES, RESPONDENT_NOT_FOUND, RESPONDENT_ALREADY_EXISTS, SURVEY_ALREADY_COMPLETED, INTERNAL_ERROR, VALIDATION_ERROR
-  - [ ] 1.2 Создать `packages/shared/src/enums/survey-status.enum.ts` — SurveyStatus: DRAFT = 'draft', ACTIVE = 'active', COMPLETED = 'completed', ARCHIVED = 'archived'
-  - [ ] 1.3 Создать `packages/shared/src/enums/question-type.enum.ts` — QuestionType: NPS = 'nps', OPEN = 'open', CLOSED = 'closed', MATRIX = 'matrix', MULTI_SELECT = 'multi_select'
-  - [ ] 1.4 Создать `packages/shared/src/enums/respondent-status.enum.ts` — RespondentStatus: NOT_OPENED = 'not_opened', OPENED = 'opened', IN_PROGRESS = 'in_progress', COMPLETED = 'completed'
+- [x] Task 1: Создание enum-файлов (AC: #1)
+  - [x] 1.1 Создать `packages/shared/src/enums/error-code.enum.ts` — ErrorCode enum
+  - [x] 1.2 Создать `packages/shared/src/enums/survey-status.enum.ts` — SurveyStatus
+  - [x] 1.3 Создать `packages/shared/src/enums/question-type.enum.ts` — QuestionType
+  - [x] 1.4 Создать `packages/shared/src/enums/respondent-status.enum.ts` — RespondentStatus
 
-- [ ] Task 2: Создание типов API-ответов (AC: #3)
-  - [ ] 2.1 Создать `packages/shared/src/types/api-response.type.ts` — IApiResponse<T> { data: T; meta: Record<string, unknown> }, IApiError { statusCode: number; message: string; errorCode: ErrorCode }
-  - [ ] 2.2 Создать `packages/shared/src/types/survey-flow.type.ts` — ISurveyFlow { nodes: IFlowNode[]; edges: IFlowEdge[] }, IFlowNode { id: string; type: string; position: { x: number; y: number }; data: IFlowNodeData }, IFlowNodeData { questionId?: number; questionType?: QuestionType; label: string; outputs: IFlowNodeOutput[] }, IFlowNodeOutput { id: string; label: string }, IFlowEdge { id: string; source: string; sourceHandle: string; target: string }
+- [x] Task 2: Создание типов API-ответов (AC: #3)
+  - [x] 2.1 Создать `packages/shared/src/types/api-response.type.ts` — IApiResponse<T>, IApiError
+  - [x] 2.2 Создать `packages/shared/src/types/survey-flow.type.ts` — ISurveyFlow, IFlowNode, IFlowEdge
 
-- [ ] Task 3: Создание DTO-интерфейсов (AC: #2)
-  - [ ] 3.1 Создать `packages/shared/src/dto/survey.dto.ts` — ICreateSurveyDto { title: string; description?: string }, IUpdateSurveyDto { title?: string; description?: string }, ISurveyResponseDto { id: number; title: string; description: string | null; status: SurveyStatus; flow: ISurveyFlow | null; questionCount: number; respondentCount: number; completedCount: number; createdAt: string; updatedAt: string }
-  - [ ] 3.2 Создать `packages/shared/src/dto/question.dto.ts` — ICreateQuestionDto { text: string; type: QuestionType; options?: string[] }, IUpdateQuestionDto { text?: string; options?: string[] }, IQuestionResponseDto { id: number; text: string; type: QuestionType; options: string[] | null; hasResponses: boolean; createdAt: string; updatedAt: string }
-  - [ ] 3.3 Создать `packages/shared/src/dto/respondent.dto.ts` — IAddRespondentDto { email: string } | { emails: string[] }, ISubmitAnswerDto { questionId: number; answer: string | number | string[] | Record<string, string> }, IRespondentResponseDto { id: number; email: string; token: string; link: string; status: RespondentStatus; createdAt: string }
-  - [ ] 3.4 Создать `packages/shared/src/dto/analytics.dto.ts` — IAnalyticsResponseDto { totalRespondents: number; completedRespondents: number; completionRate: number; averageNps: number | null; npsBreakdown: INpsBreakdown | null }, INpsBreakdown { detractors: number; passives: number; promoters: number; detractorPercent: number; passivePercent: number; promoterPercent: number }, IHeatmapResponseDto { nodes: IHeatmapNode[]; edges: IHeatmapEdge[] }, IHeatmapNode { nodeId: string; respondentCount: number }, IHeatmapEdge { edgeId: string; traversalCount: number; dropOffCount: number }
-  - [ ] 3.5 Создать `packages/shared/src/dto/pagination.dto.ts` — IPaginationMeta { page: number; limit: number; total: number; totalPages: number }, IPaginatedResponse<T> { data: T[]; meta: IPaginationMeta }
+- [x] Task 3: Создание DTO-интерфейсов (AC: #2)
+  - [x] 3.1 Создать `packages/shared/src/dto/survey.dto.ts`
+  - [x] 3.2 Создать `packages/shared/src/dto/question.dto.ts`
+  - [x] 3.3 Создать `packages/shared/src/dto/respondent.dto.ts`
+  - [x] 3.4 Создать `packages/shared/src/dto/analytics.dto.ts`
+  - [x] 3.5 Создать `packages/shared/src/dto/pagination.dto.ts`
 
-- [ ] Task 4: Создание flow-validator (AC: #4)
-  - [ ] 4.1 Создать `packages/shared/src/validation/flow-validator.ts`
-  - [ ] 4.2 Реализовать `validateFlow(flow: ISurveyFlow): IFlowValidationResult` — основная функция, возвращает { valid: boolean; errors: IFlowValidationError[] }
-  - [ ] 4.3 Реализовать `findDeadEndNodes(flow: ISurveyFlow): string[]` — поиск нод без исходящих рёбер (кроме ThankYouNode)
-  - [ ] 4.4 Реализовать `findCycles(flow: ISurveyFlow): string[][]` — поиск циклов в графе (DFS), возвращает массив циклов (массивов nodeId)
-  - [ ] 4.5 Реализовать `findDisconnectedStart(flow: ISurveyFlow): boolean` — проверка что WelcomeNode соединена хотя бы с одной нодой
-  - [ ] 4.6 Реализовать `findUnreachableNodes(flow: ISurveyFlow): string[]` — поиск нод, недостижимых от WelcomeNode
-  - [ ] 4.7 Определить типы: IFlowValidationResult { valid: boolean; errors: IFlowValidationError[] }, IFlowValidationError { type: FlowValidationErrorType; message: string; nodeIds: string[]; edgeIds?: string[] }, FlowValidationErrorType enum (DEAD_END, CYCLE, DISCONNECTED_START, UNREACHABLE_NODE)
+- [x] Task 4: Создание flow-validator (AC: #4)
+  - [x] 4.1 Создать `packages/shared/src/validation/flow-validator.ts`
+  - [x] 4.2 Реализовать `validateFlow(flow: ISurveyFlow): IFlowValidationResult`
+  - [x] 4.3 Реализовать `findDeadEndNodes(flow: ISurveyFlow): string[]`
+  - [x] 4.4 Реализовать `findCycles(flow: ISurveyFlow): string[][]`
+  - [x] 4.5 Реализовать `findDisconnectedStart(flow: ISurveyFlow): boolean`
+  - [x] 4.6 Реализовать `findUnreachableNodes(flow: ISurveyFlow): string[]`
+  - [x] 4.7 Определить типы: IFlowValidationResult, IFlowValidationError, FlowValidationErrorType
 
-- [ ] Task 5: Barrel export и верификация (AC: #5)
-  - [ ] 5.1 Обновить `packages/shared/src/index.ts` — экспорт всех enums, types, dto, validation
-  - [ ] 5.2 Проверить `turbo build` — packages/shared компилируется без ошибок
-  - [ ] 5.3 Проверить что apps/web может импортировать: `import { ErrorCode, SurveyStatus, ICreateSurveyDto } from '@bmad-cem/shared'`
-  - [ ] 5.4 Проверить что apps/api может импортировать аналогично
+- [x] Task 5: Barrel export и верификация (AC: #5)
+  - [x] 5.1 Обновить `packages/shared/src/index.ts` — экспорт всех enums, types, dto, validation
+  - [x] 5.2 Проверить `turbo build` — packages/shared компилируется без ошибок
+  - [x] 5.3 Проверить что apps/web может импортировать
+  - [x] 5.4 Проверить что apps/api может импортировать аналогично
 
 ## Dev Notes
 
@@ -187,9 +187,35 @@ packages/shared/src/
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.6
 
 ### Debug Log References
 
 ### Completion Notes List
+- 4 enum файла: ErrorCode (16 значений), SurveyStatus (4), QuestionType (5), RespondentStatus (4)
+- 2 type файла: IApiResponse<T>, IApiError, ISurveyFlow, IFlowNode, IFlowEdge и связанные
+- 5 DTO файлов: survey, question, respondent, analytics, pagination
+- flow-validator с 4 pure functions: validateFlow, findDeadEndNodes, findCycles, findDisconnectedStart, findUnreachableNodes
+- 11 unit тестов для flow-validator — все проходят
+- Barrel export через index.ts — все типы доступны через @bmad-cem/shared
+- turbo build проходит для web и api без ошибок
+
+### Change Log
+- 2026-03-20: Полная реализация Story 1.2 — контракты API в shared пакете
 
 ### File List
+- packages/shared/src/index.ts (изменён — barrel export)
+- packages/shared/src/enums/error-code.enum.ts (создан)
+- packages/shared/src/enums/survey-status.enum.ts (создан)
+- packages/shared/src/enums/question-type.enum.ts (создан)
+- packages/shared/src/enums/respondent-status.enum.ts (создан)
+- packages/shared/src/types/api-response.type.ts (создан)
+- packages/shared/src/types/survey-flow.type.ts (создан)
+- packages/shared/src/dto/survey.dto.ts (создан)
+- packages/shared/src/dto/question.dto.ts (создан)
+- packages/shared/src/dto/respondent.dto.ts (создан)
+- packages/shared/src/dto/analytics.dto.ts (создан)
+- packages/shared/src/dto/pagination.dto.ts (создан)
+- packages/shared/src/validation/flow-validator.ts (создан)
+- packages/shared/src/__tests__/flow-validator.spec.ts (создан)
+- packages/shared/package.json (изменён — добавлен jest)

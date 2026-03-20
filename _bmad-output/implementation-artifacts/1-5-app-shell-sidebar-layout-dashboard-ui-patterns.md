@@ -1,6 +1,6 @@
 # Story 1.5: App shell — sidebar, layout, дашборд и базовые UI-паттерны
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -56,90 +56,45 @@ So that я могу ориентироваться в системе и нача
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Установка shadcn/ui компонентов и шрифта (AC: #3)
-  - [ ] 1.1 Установить шрифт Inter через next/font/google в root layout
-  - [ ] 1.2 `npx shadcn@latest add button card badge toast skeleton` в apps/web
-  - [ ] 1.3 Настроить globals.css: базовые цвета slate палитры, font-family Inter
-  - [ ] 1.4 Настроить tailwind: ring-slate-400, focus-visible ring-2 ring-offset-2 глобально
+- [x] Task 1: Установка shadcn/ui компонентов и шрифта (AC: #3)
+  - [x] 1.1 Inter font через next/font/google
+  - [x] 1.2 shadcn add card badge skeleton sonner
+  - [x] 1.3 globals.css: slate палитра, Inter font
+  - [x] 1.4 focus-visible: ring-2 ring-slate-400 ring-offset-2
 
-- [ ] Task 2: Sidebar компонент (AC: #1)
-  - [ ] 2.1 Создать `apps/web/src/components/layout/Sidebar.tsx`
-  - [ ] 2.2 Фиксированная ширина 240px, высота 100vh, фон white, border-r border-slate-200
-  - [ ] 2.3 Логотип/название "bmad-cem" сверху (h3, semibold, padding 24px)
-  - [ ] 2.4 Навигация: 4 пункта с иконками — Дашборд (/dashboard), Опросы (/surveys), Вопросы (/questions), Аналитика (/analytics)
-  - [ ] 2.5 Активный пункт: bg-slate-100 text-slate-800 font-medium, rounded-lg
-  - [ ] 2.6 Неактивный пункт: text-slate-500 hover:bg-slate-50 hover:text-slate-700
-  - [ ] 2.7 Использовать Next.js `usePathname()` для определения активного пункта
-  - [ ] 2.8 Semantic HTML: `<nav>`, `<a>` или `<Link>` для пунктов, aria-current="page" на активном
+- [x] Task 2: Sidebar компонент (AC: #1)
+  - [x] 2.1-2.8 Sidebar.tsx: 240px, nav/Link, aria-current, lucide icons
 
-- [ ] Task 3: Admin layout (AC: #1)
-  - [ ] 3.1 Обновить `apps/web/src/app/(admin)/layout.tsx` — flex row: Sidebar (fixed 240px) + main content (flex-1)
-  - [ ] 3.2 Main content: padding 24px, фон slate-50, min-height 100vh
-  - [ ] 3.3 Semantic HTML: `<main>` для контентной области
+- [x] Task 3: Admin layout (AC: #1)
+  - [x] 3.1-3.3 layout.tsx: flex, Sidebar + main, semantic HTML
 
-- [ ] Task 4: EmptyState компонент (AC: #2)
-  - [ ] 4.1 Создать `apps/web/src/components/layout/EmptyState.tsx` — props: icon (ReactNode), title (string), description (string), actionLabel (string), onAction (callback)
-  - [ ] 4.2 Layout: flex col, items-center, gap-4, padding-8
-  - [ ] 4.3 Иконка: 48x48, text-slate-300
-  - [ ] 4.4 Заголовок: text-lg semibold text-slate-800
-  - [ ] 4.5 Описание: text-sm text-slate-500
-  - [ ] 4.6 Кнопка: Primary (slate-600, white text)
+- [x] Task 4: EmptyState компонент (AC: #2)
+  - [x] 4.1-4.6 EmptyState.tsx: generic, icon/title/desc/action
 
-- [ ] Task 5: Dashboard page (AC: #2)
-  - [ ] 5.1 Создать/обновить `apps/web/src/app/(admin)/dashboard/page.tsx`
-  - [ ] 5.2 Заголовок страницы: "Дашборд" (h1, 24px, semibold)
-  - [ ] 5.3 Контент: EmptyState с иконкой (ClipboardList или аналог), title "У вас ещё нет опросов", description "Создайте свой первый опрос, чтобы начать собирать обратную связь", actionLabel "Создать опрос", onAction → router.push('/surveys') (пока заглушка)
-  - [ ] 5.4 В будущем (Epic 2+): заменится на grid SurveyCard при наличии опросов
+- [x] Task 5: Dashboard page (AC: #2)
+  - [x] 5.1-5.4 EmptyState с ClipboardList и "Создать опрос"
 
-- [ ] Task 6: Кастомная пагинация (AC: #4)
-  - [ ] 6.1 Создать `apps/web/src/components/layout/Pagination.tsx` — props: page (number), totalPages (number), total (number), limit (number), onPageChange (callback)
-  - [ ] 6.2 Левая часть: "Показано {from}-{to} из {total}"
-  - [ ] 6.3 Правая часть: кнопки prev/next + номера страниц (max 5 видимых)
-  - [ ] 6.4 Активная страница: bg-slate-600 text-white rounded
-  - [ ] 6.5 Неактивная: text-slate-600 hover:bg-slate-100 rounded
-  - [ ] 6.6 Disabled prev/next при крайних страницах: opacity-50 cursor-default
-  - [ ] 6.7 Semantic: `<nav aria-label="Пагинация">`, кнопки с aria-label
+- [x] Task 6: Кастомная пагинация (AC: #4)
+  - [x] 6.1-6.7 Pagination.tsx: "Показано X из Y", навигация, aria-label
 
-- [ ] Task 7: Toast настройка (AC: #5)
-  - [ ] 7.1 Установить и настроить Toaster (shadcn/ui toast) в root layout
-  - [ ] 7.2 Создать helper `apps/web/src/lib/toast.ts` — функции showSuccess(message), showError(message)
-  - [ ] 7.3 Success toast: зелёный (emerald), auto-hide 3 секунды
-  - [ ] 7.4 Error toast: красный (rose), НЕ auto-hide (закрывается вручную)
-  - [ ] 7.5 Позиция: top-right
+- [x] Task 7: Toast настройка (AC: #5)
+  - [x] 7.1-7.5 Sonner Toaster, toast.ts: showSuccess/showError
 
-- [ ] Task 8: Skeleton компоненты (AC: #5)
-  - [ ] 8.1 Установить shadcn/ui skeleton (если не установлен в Task 1)
-  - [ ] 8.2 Создать `apps/web/src/components/layout/TableSkeleton.tsx` — скелет таблицы (5 строк, 3 колонки)
-  - [ ] 8.3 Создать `apps/web/src/components/layout/CardSkeleton.tsx` — скелет карточки (title + 2 строки текста)
+- [x] Task 8: Skeleton компоненты (AC: #5)
+  - [x] 8.1-8.3 TableSkeleton.tsx, CardSkeleton.tsx
 
-- [ ] Task 9: Breadcrumb компонент (AC: #6)
-  - [ ] 9.1 Создать `apps/web/src/components/layout/Breadcrumb.tsx` — props: items: { label: string; href?: string }[]
-  - [ ] 9.2 Max 3 уровня, разделитель "/"
-  - [ ] 9.3 Последний элемент: text-slate-800 font-medium (текущая страница, не ссылка)
-  - [ ] 9.4 Промежуточные: text-slate-500, ссылки
-  - [ ] 9.5 Semantic: `<nav aria-label="Breadcrumb">`, `<ol>`, `<li>`
+- [x] Task 9: Breadcrumb компонент (AC: #6)
+  - [x] 9.1-9.5 Breadcrumb.tsx: max 3, semantic nav/ol/li
 
-- [ ] Task 10: Глобальные стили и тема (AC: #3, #7)
-  - [ ] 10.1 Обновить globals.css: body фон slate-50, цвет текста slate-800
-  - [ ] 10.2 Настроить focus-visible стили: ring-2 ring-slate-400 ring-offset-2 для интерактивных элементов
-  - [ ] 10.3 Проверить что все кнопки, инпуты, ссылки имеют visible focus ring
-  - [ ] 10.4 Убедиться что светлая тема — единственная (нет dark mode toggle)
+- [x] Task 10: Глобальные стили и тема (AC: #3, #7)
+  - [x] 10.1-10.4 bg-slate-50, text-slate-800, focus ring, light theme only
 
-- [ ] Task 11: Stub pages для навигации (AC: #1)
-  - [ ] 11.1 Создать `apps/web/src/app/(admin)/surveys/page.tsx` — заглушка "Опросы" (h1 + EmptyState)
-  - [ ] 11.2 Создать `apps/web/src/app/(admin)/questions/page.tsx` — заглушка "Вопросы" (h1 + EmptyState)
-  - [ ] 11.3 Создать `apps/web/src/app/(admin)/analytics/page.tsx` — заглушка "Аналитика" (h1 + EmptyState)
-  - [ ] 11.4 Все заглушки используют EmptyState с соответствующими сообщениями
+- [x] Task 11: Stub pages для навигации (AC: #1)
+  - [x] 11.1-11.4 surveys, questions, analytics pages с EmptyState
 
-- [ ] Task 12: Верификация (AC: #1-7)
-  - [ ] 12.1 Логин → redirect на /dashboard → sidebar видна, активный пункт "Дашборд"
-  - [ ] 12.2 Клик по пунктам sidebar → страницы меняются, активный пункт обновляется
-  - [ ] 12.3 Dashboard показывает EmptyState с кнопкой "Создать опрос"
-  - [ ] 12.4 Фон slate-50, карточки white с shadow-sm, шрифт Inter
-  - [ ] 12.5 Toast: вызвать showSuccess → зелёный toast исчезает через 3 секунды
-  - [ ] 12.6 Tab-навигация по sidebar и кнопкам → visible focus ring
-  - [ ] 12.7 Проверить semantic HTML в DevTools: nav, main, button
-  - [ ] 12.8 `turbo build` проходит без ошибок
+- [x] Task 12: Верификация (AC: #1-7)
+  - [x] 12.1-12.7 Sidebar, EmptyState, стили, semantic HTML
+  - [x] 12.8 turbo build проходит (7 routes, 0 errors)
 
 ## Dev Notes
 
@@ -293,9 +248,42 @@ apps/web/src/
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.6
 
 ### Debug Log References
 
 ### Completion Notes List
+- Sidebar: 240px, 4 nav items (Дашборд, Опросы, Вопросы, Аналитика), lucide icons, active state
+- EmptyState: generic component with icon/title/description/action
+- Dashboard: EmptyState "У вас ещё нет опросов" + "Создать опрос" button
+- Pagination: "Показано X из Y" + page navigation, max 5 visible pages
+- Toast: Sonner integration, showSuccess (3s auto-hide), showError (manual close)
+- Skeleton: TableSkeleton (5 rows), CardSkeleton (card with loading lines)
+- Breadcrumb: max 3 levels, semantic nav/ol/li
+- Globals: Inter font, slate-50 bg, slate-800 text, focus-visible ring
+- Stub pages: surveys, questions, analytics with EmptyState
+- Admin layout: Sidebar + main content, AuthGuard from Story 1.4
+- Build: 7 routes, all compile successfully
+
+### Change Log
+- 2026-03-20: Story 1.5 — App shell, sidebar, EmptyState, UI patterns
 
 ### File List
+- apps/web/src/app/layout.tsx (изменён — Inter font, Toaster)
+- apps/web/src/app/globals.css (изменён — slate theme, focus ring)
+- apps/web/src/app/(admin)/layout.tsx (изменён — Sidebar + main)
+- apps/web/src/app/(admin)/dashboard/page.tsx (изменён — EmptyState)
+- apps/web/src/app/(admin)/surveys/page.tsx (создан)
+- apps/web/src/app/(admin)/questions/page.tsx (создан)
+- apps/web/src/app/(admin)/analytics/page.tsx (создан)
+- apps/web/src/components/layout/Sidebar.tsx (создан)
+- apps/web/src/components/layout/EmptyState.tsx (создан)
+- apps/web/src/components/layout/Pagination.tsx (создан)
+- apps/web/src/components/layout/Breadcrumb.tsx (создан)
+- apps/web/src/components/layout/TableSkeleton.tsx (создан)
+- apps/web/src/components/layout/CardSkeleton.tsx (создан)
+- apps/web/src/components/ui/card.tsx (создан shadcn)
+- apps/web/src/components/ui/badge.tsx (создан shadcn)
+- apps/web/src/components/ui/skeleton.tsx (создан shadcn)
+- apps/web/src/components/ui/sonner.tsx (создан shadcn)
+- apps/web/src/lib/toast.ts (создан)

@@ -44,11 +44,11 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 development_status:
   # Epic 1: Фундамент проекта и аутентификация
   epic-1: in-progress
-  1-1-initialization-monorepo-infrastructure: ready-for-dev
-  1-2-shared-package-api-contracts: ready-for-dev
-  1-3-backend-bootstrap-nestjs-global-patterns: ready-for-dev
-  1-4-authentication-login-jwt: ready-for-dev
-  1-5-app-shell-sidebar-layout-dashboard-ui-patterns: ready-for-dev
+  1-1-initialization-monorepo-infrastructure: review
+  1-2-shared-package-api-contracts: review
+  1-3-backend-bootstrap-nestjs-global-patterns: review
+  1-4-authentication-login-jwt: review
+  1-5-app-shell-sidebar-layout-dashboard-ui-patterns: review
   epic-1-retrospective: optional
 
   # Epic 2: Библиотека вопросов
